@@ -3,31 +3,49 @@
 
 // constructor
 Relay::Relay(){
-  __isRelayOn = false;
 }
 
 void Relay::__relayON(){
   digitalWrite(RELAY_PIN, HIGH);
-  __isRelayOn = true;
+  LOCAL.IS_RELAY_ENABLED = true;
 }
+
 void Relay::__relayOFF(){
   digitalWrite(RELAY_PIN, LOW);
-  __isRelayOn = false;
+  LOCAL.IS_RELAY_ENABLED = false;
 }
 
 // update relay on/off icon
 void Relay::__displayUpdateRelayIcon(){
   NextCrop _crop = NextCrop(HOME_RELAY_ACTIVE_ICON_CROP.PAGE, HOME_RELAY_ACTIVE_ICON_CROP.ID, HOME_RELAY_ACTIVE_ICON_CROP.NAME);
-  _crop.setImage(__isRelayOn&CONFIG.RELAY_MAY_ENABLED ? HOME_RELAY_ON_IMG: HOME_RELAY_OFF_IMG);
+  _crop.setImage(LOCAL.IS_RELAY_ENABLED&CONFIG.RELAY_MAY_ENABLED ? HOME_RELAY_ON_IMG: HOME_RELAY_OFF_IMG);
+}
+
+// update relay control enable/disable icon
+void Relay::__displayUpdateRelayControlIcon(){
+  NextCrop _crop = NextCrop(HOME_RELAY_CONTROL_ICON_CROP.PAGE, HOME_RELAY_CONTROL_ICON_CROP.ID, HOME_RELAY_CONTROL_ICON_CROP.NAME);
+  _crop.setImage(CONFIG.RELAY_MAY_ENABLED ? HOME_RELAY_ON_IMG: HOME_RELAY_OFF_IMG);
+}
+
+void Relay::UpdateIcons(){
+  __displayUpdateRelayIcon();
+  __displayUpdateRelayControlIcon();
 }
 
 // switch relay depends of current temperature
 void Relay::__relaySwitchByTemperature(float &temp){
   if (!CONFIG.RELAY_MAY_ENABLED){
+    if (LOCAL.IS_RELAY_ENABLED){
+      __relayOFF();
+    }
     return;
   }
   
-  if (__isRelayOn){
+  if (isnan(temp)){
+      return;
+  }
+  
+  if (LOCAL.IS_RELAY_ENABLED){
     if (temp >= CONFIG.RELAY_TARGET_TEMPERATURE){
       __relayOFF();
       __displayUpdateRelayIcon();
@@ -36,12 +54,6 @@ void Relay::__relaySwitchByTemperature(float &temp){
     __relayON();
     __displayUpdateRelayIcon();
   }
-}
-
-// update relay control enable/disable icon
-void Relay::__displayUpdateRelayControlIcon(){
-  NextCrop _crop = NextCrop(HOME_RELAY_CONTROL_ICON_CROP.PAGE, HOME_RELAY_CONTROL_ICON_CROP.ID, HOME_RELAY_CONTROL_ICON_CROP.NAME);
-  _crop.setImage(CONFIG.RELAY_MAY_ENABLED ? HOME_RELAY_ON_IMG: HOME_RELAY_OFF_IMG);
 }
 
 void Relay::setHysteresis(float &hyst){
@@ -55,15 +67,13 @@ void Relay::setTargetTemperature(float &temp){
 // init setup
 void Relay::Setup(){
   pinMode(RELAY_PIN, OUTPUT);
+  __relayOFF();
   UpdateIcons();
-}
 
-void Relay::UpdateIcons(){
-  __displayUpdateRelayControlIcon();
-  __displayUpdateRelayIcon();
 }
 
 void Relay::Update(float &temp){
   __relaySwitchByTemperature(temp);
+//  UpdateIcons();
 }
 

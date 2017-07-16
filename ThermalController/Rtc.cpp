@@ -49,8 +49,6 @@ void RTC::setTime(/*real_time r_time*/){
 
 // update date and time on display
 void RTC::Update(){
-//  real_time r_time;
-//  readTime(&r_time);
   readTime();
   char str[strlen(WEEK_AND_MONTH_DISP[3])+strlen(WEEK_AND_MONTH_DISP[15])+16];
   // update time "18 00"

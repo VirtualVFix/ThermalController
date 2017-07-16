@@ -18,10 +18,18 @@ void Sensor::__getTemperatureAndHumidity(){
 
 // update temperature and humidity
 void Sensor::__displayUpdateTemperatureAndHumidity(){
+  NextText temp_int = NextText(HOME_TEMP_INT_TEXT.PAGE, HOME_TEMP_INT_TEXT.ID, HOME_TEMP_INT_TEXT.NAME);
+  NextText humid = NextText(HOME_HUMIDITY_TEXT.PAGE, HOME_HUMIDITY_TEXT.ID, HOME_HUMIDITY_TEXT.NAME);
+  NextText temp_feel = NextText(HOME_TEMP_FEEL_TEXT.PAGE, HOME_TEMP_FEEL_TEXT.ID, HOME_TEMP_FEEL_TEXT.NAME);
+  
   if (isnan(temperature) || isnan(humidity)) {
     Serial.println("Failed to read data from DHT sensor !");
+    temp_int.setText("NA.");
+    humid.setText("NA%");
+    temp_feel.setText("NA");
     return;
   }
+  
   char str[5] = "";
   // update integer part of temperature
   sprintf(str, "%2d%s", (int8_t)temperature, temperature <= -10 ? "" : ".");
@@ -29,7 +37,7 @@ void Sensor::__displayUpdateTemperatureAndHumidity(){
   // update temperature trend
   __trend.Update(temperature);
 
-  NextText temp_int = NextText(HOME_TEMP_INT_TEXT.PAGE, HOME_TEMP_INT_TEXT.ID, HOME_TEMP_INT_TEXT.NAME);
+//  NextText temp_int = NextText(HOME_TEMP_INT_TEXT.PAGE, HOME_TEMP_INT_TEXT.ID, HOME_TEMP_INT_TEXT.NAME);
   temp_int.setText(str);
   
   // hide float part of temperature when display 3 symbols
@@ -43,15 +51,13 @@ void Sensor::__displayUpdateTemperatureAndHumidity(){
   // update humidity
   strcpy(str, "");
   sprintf(str, "%d%%", humidity);
-  NextText humid = NextText(HOME_HUMIDITY_TEXT.PAGE, HOME_HUMIDITY_TEXT.ID, HOME_HUMIDITY_TEXT.NAME);
   humid.setText(str);
 
   // Compute heat index in Celsius
   float hic = __dht.computeHeatIndex(temperature, humidity, false);
   // update feel temperature
   strcpy(str, "");
-  sprintf(str, "%2d", round(hic));
-  NextText temp_feel = NextText(HOME_TEMP_FEEL_TEXT.PAGE, HOME_TEMP_FEEL_TEXT.ID, HOME_TEMP_FEEL_TEXT.NAME);
+  sprintf(str, "%2d", (int)round(hic));
   temp_feel.setText(str);
 }
 
@@ -69,7 +75,6 @@ void Sensor::__displayUpdateTemperatureWaveForm(){
 //  CONFIG.WAVE_TEMP_LIST.add(temp); 
 
   NextWaveform wave = NextWaveform(HOME_TEMPERATURE_WAVE.PAGE, HOME_TEMPERATURE_WAVE.ID, HOME_TEMPERATURE_WAVE.NAME);
-  
   for (byte i=0; i<HOME_WAVE_CHANNELS; i++){
     wave.addValue(i, temp+i);
   }

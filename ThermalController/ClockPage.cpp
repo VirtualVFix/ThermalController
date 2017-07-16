@@ -27,7 +27,7 @@ void ClockPage::OnPageLoad(){
   NextText second = NextText(CLOCK_SECONDS_TEXT.PAGE, CLOCK_SECONDS_TEXT.ID, CLOCK_SECONDS_TEXT.NAME);
   NextVariable day = NextVariable(CLOCK_DAY_VAR.PAGE, CLOCK_DAY_VAR.ID, CLOCK_DAY_VAR.NAME);
   NextVariable month = NextVariable(CLOCK_MONTH_VAR.PAGE, CLOCK_MONTH_VAR.ID, CLOCK_MONTH_VAR.NAME);
-  NextVariable weekday = NextVariable(CLOCK_WEEKDAY_VAR.PAGE, CLOCK_WEEKDAY_VAR.ID, CLOCK_WEEKDAY_VAR.NAME);
+//  NextVariable weekday = NextVariable(CLOCK_WEEKDAY_VAR.PAGE, CLOCK_WEEKDAY_VAR.ID, CLOCK_WEEKDAY_VAR.NAME);
 
   // read current date and time
   RTC rtc;

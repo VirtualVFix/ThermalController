@@ -4,12 +4,13 @@
 #include "ClockPage.h"
 #include "SettingPage.h"
 #include "Setting2Page.h"
+//#include "SDCard.h"
 
 BasePage *p_current = NULL;
 
 // settings 1 page
 void settingButtonCallback(){
-  p_current->OnPageChange("page 1");
+  p_current->OnPageChange("page 2");
   delete p_current;
   p_current = new SettingPage(homeButtonCallback, setting2ButtonCallback);
   p_current->OnPageLoad();
@@ -17,7 +18,7 @@ void settingButtonCallback(){
 
 // settings 2 page
 void setting2ButtonCallback(){
-  p_current->OnPageChange("page 2");
+  p_current->OnPageChange("page 3");
   delete p_current;
   p_current = new Setting2Page(homeButtonCallback, settingButtonCallback);
   p_current->OnPageLoad();
@@ -25,7 +26,7 @@ void setting2ButtonCallback(){
 
 // timer page
 void timerButtonCallback(){
-  p_current->OnPageChange("page 3");
+  p_current->OnPageChange("page 4");
   delete p_current;
   p_current = new TimerPage(homeButtonCallback, clockButtonCallback);
   p_current->OnPageLoad();
@@ -33,7 +34,7 @@ void timerButtonCallback(){
 
 // clock page
 void clockButtonCallback(){
-  p_current->OnPageChange("page 4");
+  p_current->OnPageChange("page 5");
   delete p_current;
   p_current = new ClockPage(homeButtonCallback, timerButtonCallback);
   p_current->OnPageLoad();
@@ -41,7 +42,7 @@ void clockButtonCallback(){
 
 // home page
 void homeButtonCallback(){
-  p_current->OnPageChange("page 0");
+  p_current->OnPageChange("page 1");
   delete p_current;
   p_current = new HomePage(settingButtonCallback, timerButtonCallback);
   p_current->OnPageLoad();
@@ -64,16 +65,22 @@ void setup(){
     readWaveDataConfig();
   }
 
-  // update page in case of wd reset
-  if (getCurrentPageId() != 0){
-    sendCommand("page 0");
-  }
   p_current = new HomePage(settingButtonCallback, timerButtonCallback);
-  delay(500);  
+  delay(500);
+
+  // update page
+  if (getCurrentPageId() != 1){
+    sendCommand("page 1");
+  }
+  
   p_current->InitSetup();
   p_current->OnPageLoad();
 
   printMemory("setup end");
+
+//  SDCard SD = SDCard();
+//  SD.write(TEMPERATURE_FILE, "TEST 1");
+//  SD.read(TEMPERATURE_FILE, NULL);
 }
 
 void loop(){  
@@ -81,4 +88,3 @@ void loop(){
   nextLoop(p_current->getCallbackListenerList());
   p_current->Update();
 }
-

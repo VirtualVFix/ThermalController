@@ -27,13 +27,13 @@ void Setting2Page::OnPageLoad(){
   NextText max_temp = NextText(SET_2_MAX_TEMP_TEXT.PAGE, SET_2_MAX_TEMP_TEXT.ID, SET_2_MAX_TEMP_TEXT.NAME);
   NextText min_temp = NextText(SET_2_MIN_TEMP_TEXT.PAGE, SET_2_MIN_TEMP_TEXT.ID, SET_2_MIN_TEMP_TEXT.NAME);  
   
-  // sensor interval
+  // sensor interval (in seconds)
   char str[5];
   memset(str, 0, sizeof str);
-  sprintf(str, "%d", CONFIG.SENSOR_UPDATE_INTERVAL/60);
+  sprintf(str, "%d", CONFIG.SENSOR_UPDATE_INTERVAL);
   sensor.setText(str);
 
-  // trend interval
+  // trend interval (in minutes)
   memset(str, 0, sizeof str);
   sprintf(str, "%d", CONFIG.TREND_UPDATE_INTERVAL/60);
   trend.setText(str);
@@ -53,17 +53,17 @@ void Setting2Page::OnPageLoad(){
 }
 
 void Setting2Page::OnPageChange(const char *cmd){
-  // get sensor 
+  // get sensor interval (in seconds)
   NextText sensor = NextText(SET_2_SENSOR_INTERVAL_TEXT.PAGE, SET_2_SENSOR_INTERVAL_TEXT.ID, SET_2_SENSOR_INTERVAL_TEXT.NAME);
   char str[5];
   memset(str, 0, sizeof str);
   if (sensor.getText(str, 5) == 0){
 //    debugPrintln("Error get sensor interval from display !");
   }else{
-    CONFIG.SENSOR_UPDATE_INTERVAL = atoi(str)==0 ? 60 : atoi(str)*60;
+    CONFIG.SENSOR_UPDATE_INTERVAL = atoi(str)==0 ? 1 : atoi(str);
   }
   
-  // get trend 
+  // get trend interval (in minutes)
   NextText trend = NextText(SET_2_TREND_INTERVAL_TEXT.PAGE, SET_2_TREND_INTERVAL_TEXT.ID, SET_2_TREND_INTERVAL_TEXT.NAME);
   memset(str, 0, sizeof str);
   if (trend.getText(str, 5) == 0){

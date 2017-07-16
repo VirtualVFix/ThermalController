@@ -9,7 +9,7 @@ HomePage::HomePage(ObjectCallback settingsCallback, ObjectCallback timerCallback
   // add button callback
   this->__settingButton->addReleaseCallback(settingsCallback);
   this->__timerButton->addReleaseCallback(timerCallback);
-
+  
   // timestamps
   this->__sensor_update_timestamp = 0;
   this->__time_update_timestamp = 0;
@@ -46,11 +46,17 @@ NextTouch** HomePage::getCallbackListenerList(){
 }
 
 void HomePage::OnPageLoad(){
+  // skip loading 
+  sendCommand("sys0=1");
+    
   // update target temperature
   NextText target = NextText(HOME_TARGET_TEMP_TEXT.PAGE, HOME_TARGET_TEMP_TEXT.ID, HOME_TARGET_TEMP_TEXT.NAME);
   char str[6];
   sprintf(str, "%d.%01d", (int)CONFIG.RELAY_TARGET_TEMPERATURE, (int)(CONFIG.RELAY_TARGET_TEMPERATURE*10)%10);
   target.setText(str);
+  
+  // update relay icons
+  __relay.UpdateIcons();
 
   // restore waves graphics
   __sensor.RestoreWaves();
@@ -63,14 +69,12 @@ void HomePage::OnPageChange(const char *cmd){
 
 void HomePage::Update(){
   if (__time_update_timestamp == 0 || millis()-__time_update_timestamp > (unsigned long)CONFIG.TIME_UPDATE_INTERVAL*1000){
-    printMemory("HOME rtc update");
     __rtc.Update();
     this->__time_update_timestamp = millis();    
   }
   if (__sensor_update_timestamp == 0 || millis()-__sensor_update_timestamp > (CONFIG.DEMO_MODE_ON ? 300:(unsigned long)CONFIG.SENSOR_UPDATE_INTERVAL*1000)){
     __sensor.Update();
-    __relay.Update(__sensor.temperature);
-    __relay.UpdateIcons();    
+    __relay.Update(__sensor.temperature);  
     this->__sensor_update_timestamp = millis();    
   }
 }

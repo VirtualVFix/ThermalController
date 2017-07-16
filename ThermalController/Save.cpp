@@ -2,8 +2,18 @@
 
 // read dynamic config variables
 void readConfig(){
-  dinamic_config conf;
-  EEPROM.get(0, conf);
+  persists_config conf;
+  byte b0=0;
+  byte b1=0;
+  // reset config on first load
+  EEPROM.get(0, b0);
+  EEPROM.get(1, b1);
+  if (b0 != EEPROM_BYTE_0 && b1 != EEPROM_BYTE_1){
+    resetConfig();
+    EEPROM.update(0, EEPROM_BYTE_0);
+    EEPROM.update(1, EEPROM_BYTE_1);
+  }
+  EEPROM.get(2, conf);
 
 //  debugPrintln("READ CONFIG");
 //  debugPrint("DEMO_MODE_ON: ");
@@ -17,9 +27,9 @@ void readConfig(){
 //  debugPrint("DISPLAY_SLEEP_TIMEOUT: ");
 //  debugPrintln(conf.DISPLAY_SLEEP_TIMEOUT);
 //  debugPrint("MAX_WAVE_TEMP: ");
-//  debugPrintln(conf.MAX_WAVE_TEMP);
+//  debugPrintln(conf.MAX_TEMP);
 //  debugPrint("MIN_WAVE_TEMP: ");
-//  debugPrintln(conf.MIN_WAVE_TEMP);
+//  debugPrintln(conf.MIN_TEMP);
 //  debugPrint("TIME_UPDATE_INTERVAL: ");
 //  debugPrintln(conf.TIME_UPDATE_INTERVAL);
 //  debugPrint("SENSOR_UPDATE_INTERVAL: ");
@@ -27,21 +37,19 @@ void readConfig(){
 //  debugPrint("TREND_UPDATE_INTERVAL: ");
 //  debugPrintln(conf.TREND_UPDATE_INTERVAL);
 
-  if ((byte)conf.DEMO_MODE_ON <= 1){
-    CONFIG = conf;
-  }
+  CONFIG = conf;
 }
 
 // save dynamic config variables
 void saveConfig(){
 //  debugPrintln("SAVE CONFIG");
-  EEPROM.put(0, CONFIG);
+  EEPROM.put(2, CONFIG);
 }
 
 // reset config to default values
 void resetConfig(){
-//  debugPrintln("RESET CONFIG");
-  dinamic_config conf;
+  debugPrintln("RESET CONFIG");
+  persists_config conf;
   CONFIG = conf;
   saveConfig();
 }

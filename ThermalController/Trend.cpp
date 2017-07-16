@@ -2,7 +2,7 @@
 
 Trend::Trend(){
   this->__trend_timestamp = 0;
-  this->__currentTrend = CONFIG.CURRENT_TREND;
+  this->__currentTrend = LOCAL.CURRENT_TREND;
   this->__trendDelta = 0;
   this->__previousTemp = 0;
   this->__firstCall = true;
@@ -20,7 +20,7 @@ void Trend::__calculateTrend(){
     }
     this->__trendDelta = 0;
     this->__trend_timestamp = millis();
-    CONFIG.CURRENT_TREND = __currentTrend;
+    LOCAL.CURRENT_TREND = __currentTrend;
   }
 }
 

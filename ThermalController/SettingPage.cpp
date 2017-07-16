@@ -33,7 +33,7 @@ void SettingPage::OnPageLoad(){
   sprintf(str, "%d", (int)CONFIG.RELAY_TARGET_TEMPERATURE);
   target_int.setText(str);
   memset(str, 0, sizeof str);
-  sprintf(str, "%d", round((CONFIG.RELAY_TARGET_TEMPERATURE-(int)CONFIG.RELAY_TARGET_TEMPERATURE)*10));
+  sprintf(str, "%d", (int)round((CONFIG.RELAY_TARGET_TEMPERATURE-(int)CONFIG.RELAY_TARGET_TEMPERATURE)*10));
   target_float.setText(str);
   
   // set hysteresis
@@ -41,7 +41,7 @@ void SettingPage::OnPageLoad(){
   sprintf(str, "%d", (int)CONFIG.RELAY_HYSTERESIS);  
   hyst_int.setText(str);
   memset(str, 0, sizeof str);
-  sprintf(str, "%d", round((CONFIG.RELAY_HYSTERESIS-(int)CONFIG.RELAY_HYSTERESIS)*10));
+  sprintf(str, "%d", (int)round((CONFIG.RELAY_HYSTERESIS-(int)CONFIG.RELAY_HYSTERESIS)*10));
   hyst_float.setText(str);
   
   // set relay button state

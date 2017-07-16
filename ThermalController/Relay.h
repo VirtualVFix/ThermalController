@@ -4,9 +4,7 @@
 
 #include "Config.h"
 
-class Relay{//: public BaseInterface{
-  bool __isRelayOn; // relay current status
-  
+class Relay{//: public BaseInterface{  
   // relay on/off
   void __relayON();
   void __relayOFF();
