@@ -4,11 +4,11 @@ persists_config CONFIG;
 temporary_config LOCAL;
 
 void printMemory(const char* msg){
-//   debugPrintln("");
-//   debugPrint(msg);
-//   debugPrint(" free ram: ");
-//   debugPrintln(freeMemory());
-//   debugPrintln("");
+   debugPrintln("");
+   debugPrint(msg);
+   debugPrint(" free ram: ");
+   debugPrintln(freeMemory());
+   debugPrintln("");
 }
 
 //LimitedList::LimitedList(){

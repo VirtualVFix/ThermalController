@@ -4,8 +4,9 @@
 #include <NextionLite.h>
 #include <Arduino.h>
 #include "Save.h"
+#include "Timer.h"
 
-//#include <MemoryFree.h>
+#include <MemoryFree.h>
 void printMemory(const char* msg);
 
 //class LimitedList{
@@ -30,7 +31,15 @@ struct nextidentifier{
 /* buttons */
 const nextidentifier TIMER_HOME_BUT = {4, 2, "b5"}; // Home button on timer page
 const nextidentifier TIMER_CLOCK_BUT = {4, 3, "b0"}; // Clock button on timer page
+const nextidentifier TIMER_TIMER_BUT = {4, 4, "bTimer"}; // Timer on/off button
+/* images id */
+const byte TIMER_TIMER_ON_BUTTON_IMG = 17; // Timer button "on" background image 
+const byte TIMER_TIMER_OFF_BUTTON_IMG = 16; // Timer button "off" background image 
 /* text */
+const nextidentifier TIMER_START_HOUR_TEXT = {4, 13, "t0"}; // Start timer hour
+const nextidentifier TIMER_START_MIN_TEXT = {4, 14, "t1"}; // Start timer minute
+const nextidentifier TIMER_END_HOUR_TEXT = {4, 15, "t2"}; // End timer hour
+const nextidentifier TIMER_END_MIN_TEXT = {4, 16, "t3"}; // End timer minutes
 /* ==================================================== */
 
 /* ==================== CLOCK page ==================== */
@@ -114,19 +123,12 @@ const char* const WEEK_AND_MONTH_DISP[] = {"Sunday","Monday","Tuesday","Wednesda
 enum HOME_TREND_IMAGES {TREND_EMPTY=4, TREND_UP=2, TREND_DOWN=0, TREND_FLAT=1}; // trend image ids
 /* ==================================================== */
 
-/* ================== SD CARD ======================== */
-//const char* const TEMPERATURE_FILE = "TEMPERATURE.TXT";
-//const char* const HUMIDITY_FILE = "HUMIDITY.TXT";
-//const char* const RELAY_USAGE_FILE = "RELAY.TXT";
-/* =================================================== */
-
 /* ================== define ======================== */
 #define RELAY_PIN 6 // relay pin
 #define DHT_PIN 2 // DHT22 sensor pin
 #define DHT_TYPE DHT22 // DHT22 sensor type
 #define DS3231_I2C_ADDRESS 0x68 // DS3231 sensor address
 #define CONFIG_RESET_PIN 3 // connect this pin with ground and restart Arduino board to reset config to default values
-#define SDCARD_CS_PIN 4 // CS (Slave Select) PIN for CATALEX MicroSD Adapter (v1.0)
 /* ================================================== */
 
 /* ================ base page class ================= */
@@ -166,6 +168,11 @@ struct persists_config{
   byte TIME_UPDATE_INTERVAL = 30; // 0-60 time interval in seconds for update time
   uint16_t SENSOR_UPDATE_INTERVAL = 300; // 0-65,535 time interval in seconds for update data from sensors
   uint16_t TREND_UPDATE_INTERVAL = 7200; // 0-65,535 time interval in seconds required for trend calculation
+  
+  // timer
+  bool IS_TIMER_ENABLED = false; // is timer enabled
+  TimerTime TIMER_START_TIME = {18, 0}; // timer start time
+  TimerTime TIMER_END_TIME = {7, 0}; // timer end time
 };
 extern persists_config CONFIG;
 
@@ -175,8 +182,6 @@ struct temporary_config{
     HOME_TREND_IMAGES CURRENT_TREND = TREND_FLAT; // current temperature trend
     // relay
     bool IS_RELAY_ENABLED = false; //  current relay status
-    // SD Card available
-    bool IS_SDCARD_AVAILABLE = false; 
     // wave form arrays
 };
 extern temporary_config LOCAL;

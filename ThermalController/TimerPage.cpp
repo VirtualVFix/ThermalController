@@ -34,7 +34,6 @@ NextTouch** TimerPage::getCallbackListenerList(){
 }
 
 void TimerPage::Update(){
-//  printMemory("Timer update");
-//  delay(500);
+  
 }
 
