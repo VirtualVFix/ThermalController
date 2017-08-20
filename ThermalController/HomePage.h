@@ -2,7 +2,7 @@
 #ifndef __HOMEPAGE_H__
 #define __HOMEPAGE_H__
 
-#include "Rtc.h"
+#include "Datetime.h"
 #include "Relay.h"
 #include "Sensor.h"
 #include "Config.h"
@@ -26,7 +26,7 @@ class HomePage: public BasePage{
     // relay 
     Relay __relay;
     // rtc
-    RTC __rtc;
+    Datetime __datetime;
     // thermal sensor 
     Sensor __sensor;
     // buttons on home page

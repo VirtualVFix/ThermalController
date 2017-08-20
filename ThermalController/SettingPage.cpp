@@ -18,6 +18,9 @@ SettingPage::SettingPage(ObjectCallback homeCallback, ObjectCallback settingCall
 SettingPage::~SettingPage(){
   delete this->__homeButton;
   delete this->__settingButton;
+  for (byte i=0; i<sizeof(__callback_listener_list)/sizeof(*__callback_listener_list); i++){
+    this->__callback_listener_list[i] = NULL;
+  }
 }
 
 void SettingPage::OnPageLoad(){

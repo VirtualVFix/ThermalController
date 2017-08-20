@@ -18,6 +18,9 @@ Setting2Page::Setting2Page(ObjectCallback homeCallback, ObjectCallback settingCa
 Setting2Page::~Setting2Page(){
   delete this->__homeButton;
   delete this->__settingButton;
+  for (byte i=0; i<sizeof(__callback_listener_list)/sizeof(*__callback_listener_list); i++){
+    this->__callback_listener_list[i] = NULL;
+  }
 }
 
 void Setting2Page::OnPageLoad(){

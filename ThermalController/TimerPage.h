@@ -3,6 +3,7 @@
 #define __TIMERPAGE_H__
 
 #include "Config.h"
+#include <MD_DS3231.h>
 
 class TimerPage: public BasePage{
   public:

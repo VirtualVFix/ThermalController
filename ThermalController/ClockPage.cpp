@@ -15,9 +15,12 @@ ClockPage::ClockPage(ObjectCallback homeCallback, ObjectCallback timerCallback){
   this->__callback_listener_list[2] = NULL;
 }
 
-ClockPage::~ClockPage(){ 
+ClockPage::~ClockPage(){
   delete this->__homeButton;
   delete this->__timerButton;
+  for (byte i=0; i<sizeof(__callback_listener_list)/sizeof(*__callback_listener_list); i++){
+    this->__callback_listener_list[i] = NULL;
+  }
 }
 
 void ClockPage::OnPageLoad(){
@@ -27,33 +30,31 @@ void ClockPage::OnPageLoad(){
   NextText second = NextText(CLOCK_SECONDS_TEXT.PAGE, CLOCK_SECONDS_TEXT.ID, CLOCK_SECONDS_TEXT.NAME);
   NextVariable day = NextVariable(CLOCK_DAY_VAR.PAGE, CLOCK_DAY_VAR.ID, CLOCK_DAY_VAR.NAME);
   NextVariable month = NextVariable(CLOCK_MONTH_VAR.PAGE, CLOCK_MONTH_VAR.ID, CLOCK_MONTH_VAR.NAME);
-//  NextVariable weekday = NextVariable(CLOCK_WEEKDAY_VAR.PAGE, CLOCK_WEEKDAY_VAR.ID, CLOCK_WEEKDAY_VAR.NAME);
 
   // read current date and time
-  RTC rtc;
-  rtc.readTime();
+  RTC.readTime();
 
   // time
   char str[6];
   memset(str, 0, sizeof str);
-  sprintf(str, "%02u", rtc.r_time.hour);
+  sprintf(str, "%02u", RTC.h);
   hour.setText(str);
 
   memset(str, 0, sizeof str);
-  sprintf(str, "%02u", rtc.r_time.minute);
+  sprintf(str, "%02u", RTC.m);
   minute.setText(str);
 
   memset(str, 0, sizeof str);
-  sprintf(str, "%02u", rtc.r_time.second);
+  sprintf(str, "%02u", RTC.s);
   second.setText(str);
 
   // date
-  month.setValue(rtc.r_time.month);
+  month.setValue(RTC.mm);
 
-  day.setValue(rtc.r_time.dayOfMonth);
+  day.setValue(RTC.dd);
 
   memset(str, 0, sizeof str);
-  sprintf(str, "%d", 2000+rtc.r_time.year);
+  sprintf(str, "%d", RTC.yyyy);
   year.setText(str);
 
   // click to month element to display month in text format and calc correct weekday
@@ -68,21 +69,20 @@ void ClockPage::OnPageChange(const char *cmd){
   NextText minute = NextText(CLOCK_MINUTES_TEXT.PAGE, CLOCK_MINUTES_TEXT.ID, CLOCK_MINUTES_TEXT.NAME);
   NextText second = NextText(CLOCK_SECONDS_TEXT.PAGE, CLOCK_SECONDS_TEXT.ID, CLOCK_SECONDS_TEXT.NAME);
 
-  RTC rtc;
   // hours
   char str[6];
   bool error = false;
   memset(str, 0, sizeof str);
   error |= hour.getText(str, 6) == 0;
-  rtc.r_time.hour = atoi(str);
+  RTC.h = atoi(str);
   // minutes
   memset(str, 0, sizeof str);
   error |= minute.getText(str, 6) == 0;
-  rtc.r_time.minute = atoi(str);
+  RTC.m = atoi(str);
   // seconds
   memset(str, 0, sizeof str);
   error |= second.getText(str, 6) == 0;
-  rtc.r_time.second = atoi(str);
+  RTC.s = atoi(str);
 
 //  if (error){
 //    debugPrintln("Error get time from display !");
@@ -99,21 +99,21 @@ void ClockPage::OnPageChange(const char *cmd){
     // day
     day.getValue(num);
     error |= num > 31;
-    rtc.r_time.dayOfMonth = (byte)num;
+    RTC.dd = (byte)num;
     // weekday
     num = 888;
     weekday.getValue(num);
     error |= num > 7;
-    rtc.r_time.dayOfWeek = (byte)num;
+    RTC.dow = (byte)num;
     // month
     num = 888;
     month.getValue(num);
     error |= num > 12;
-    rtc.r_time.month = (byte)num;
+    RTC.mm = (byte)num;
     // year 
     memset(str, 0, sizeof str);
     error |= year.getText(str, 6) == 0;
-    rtc.r_time.year = atoi(str)-2000;
+    RTC.yyyy = atoi(str);
 
 //    if (error){
 //      debugPrintln("Error get date from display !");
@@ -122,7 +122,7 @@ void ClockPage::OnPageChange(const char *cmd){
   
   // set time
   if (!error){
-    rtc.setTime();
+    RTC.writeTime();
   }
   
   // change page

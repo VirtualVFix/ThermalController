@@ -23,6 +23,9 @@ HomePage::HomePage(ObjectCallback settingsCallback, ObjectCallback timerCallback
 HomePage::~HomePage(){
   delete this->__settingButton;
   delete this->__timerButton;
+  for (byte i=0; i<sizeof(__callback_listener_list)/sizeof(*__callback_listener_list); i++){
+    this->__callback_listener_list[i] = NULL;
+  }
 }
 
 void HomePage::InitSetup(){   
@@ -30,7 +33,7 @@ void HomePage::InitSetup(){
   __relay.Setup();
 
   // rtc setup
-  __rtc.Setup();
+  __datetime.Setup();
 
   // sensor setup
   __sensor.Setup();
@@ -58,6 +61,9 @@ void HomePage::OnPageLoad(){
   // update relay icons
   __relay.UpdateIcons();
 
+  // update timer icon
+  __datetime.UpdateIcon();
+
   // restore waves graphics
   __sensor.RestoreWaves();
 }
@@ -69,12 +75,24 @@ void HomePage::OnPageChange(const char *cmd){
 
 void HomePage::Update(){
   if (__time_update_timestamp == 0 || millis()-__time_update_timestamp > (unsigned long)CONFIG.TIME_UPDATE_INTERVAL*1000){
-    __rtc.Update();
+    __datetime.Update();
+
+    // check alarms
+    if (CONFIG.IS_TIMER_ENABLED){
+        bool triggered = false;
+        triggered |= RTC.checkAlarm1();
+        triggered |= RTC.checkAlarm2();
+        if (triggered){
+          __relay.UpdateIcons();
+          __sensor_update_timestamp = 0;
+        }
+    }
+    
     this->__time_update_timestamp = millis();    
   }
   if (__sensor_update_timestamp == 0 || millis()-__sensor_update_timestamp > (CONFIG.DEMO_MODE_ON ? 300:(unsigned long)CONFIG.SENSOR_UPDATE_INTERVAL*1000)){
     __sensor.Update();
-    __relay.Update(__sensor.temperature);  
+    __relay.Update(__sensor.temperature);
     this->__sensor_update_timestamp = millis();    
   }
 }

@@ -3,7 +3,7 @@
 #define __CLOCKPAGE_H__
 
 #include "Config.h"
-#include "Rtc.h"
+#include <MD_DS3231.h>
 
 class ClockPage: public BasePage{
   public:

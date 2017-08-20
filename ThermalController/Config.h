@@ -4,9 +4,8 @@
 #include <NextionLite.h>
 #include <Arduino.h>
 #include "Save.h"
-#include "Timer.h"
 
-#include <MemoryFree.h>
+//#include <MemoryFree.h>
 void printMemory(const char* msg);
 
 //class LimitedList{
@@ -96,9 +95,9 @@ const nextidentifier HOME_TIMER_BUT = {1, 11, "b4"};
 /* Relay Power and heater icons */
 const nextidentifier HOME_RELAY_CONTROL_ICON_CROP = {1, 15, "qPower"}; // power on/off (relay control on/off) icons
 const nextidentifier HOME_RELAY_ACTIVE_ICON_CROP = {1, 14, "qHeater"}; // (relay on/off) heater on/off icons
-const nextidentifier HOME_TIME_ACTIVE_ICON_CROP = {1, 17, "qTimer"}; // (relay on/off) heater on/off icons
-const byte HOME_RELAY_OFF_IMG = 0; // power off and heater off image 
-const byte HOME_RELAY_ON_IMG = 1; // power on and heater on image 
+const nextidentifier HOME_TIMER_ACTIVE_ICON_CROP = {1, 17, "qTimer"}; // timer on/off on/off icon
+const byte HOME_ICONS_OFF_IMG = 0; // power off and heater off image 
+const byte HOME_ICONS_ON_IMG = 1; // power on and heater on image 
 /* date and time */
 const nextidentifier HOME_TIME_TEXT = {1, 4, "tTime"};
 const nextidentifier HOME_DATE_TEXT = {1, 12, "tDate"};
@@ -127,7 +126,7 @@ enum HOME_TREND_IMAGES {TREND_EMPTY=4, TREND_UP=2, TREND_DOWN=0, TREND_FLAT=1}; 
 #define RELAY_PIN 6 // relay pin
 #define DHT_PIN 2 // DHT22 sensor pin
 #define DHT_TYPE DHT22 // DHT22 sensor type
-#define DS3231_I2C_ADDRESS 0x68 // DS3231 sensor address
+//#define DS3231_I2C_ADDRESS 0x68 // DS3231 sensor address
 #define CONFIG_RESET_PIN 3 // connect this pin with ground and restart Arduino board to reset config to default values
 /* ================================================== */
 
@@ -148,7 +147,7 @@ class BasePage{
 #define EEPROM_BYTE_0 10 // first byte in eeprom. Dynamic config will be reset If byte 0 from eeprom doesn't equal this value.
 #define EEPROM_BYTE_1 100 // second byte in eeprom. Dynamic config will be reset If byte 1 from eeprom doesn't equal this value.
 
-// dynamic config saved in EEPROM
+// dynamic config which keeps in EEPROM
 struct persists_config{
   bool DEMO_MODE_ON = false; // on/off demo mode 
   
@@ -161,18 +160,16 @@ struct persists_config{
   uint16_t DISPLAY_SLEEP_TIMEOUT = 0; // 0-999 sleep timeout. 0-disable
   
   // wave form
-  uint16_t MAX_TEMP = 40; // max display temperature on wave form
+  uint16_t MAX_TEMP = 30; // max display temperature on wave form
   int16_t MIN_TEMP = 20; // min display temperature on wave form
   
   // intervals
-  byte TIME_UPDATE_INTERVAL = 30; // 0-60 time interval in seconds for update time
-  uint16_t SENSOR_UPDATE_INTERVAL = 300; // 0-65,535 time interval in seconds for update data from sensors
-  uint16_t TREND_UPDATE_INTERVAL = 7200; // 0-65,535 time interval in seconds required for trend calculation
+  byte TIME_UPDATE_INTERVAL = 10; // 0-60 time interval in seconds for update time
+  uint16_t SENSOR_UPDATE_INTERVAL = 30; // 0-65,535 time interval in seconds for update data from sensors
+  uint16_t TREND_UPDATE_INTERVAL = 5400; // 0-65,535 time interval in seconds required for trend calculation
   
   // timer
   bool IS_TIMER_ENABLED = false; // is timer enabled
-  TimerTime TIMER_START_TIME = {18, 0}; // timer start time
-  TimerTime TIMER_END_TIME = {7, 0}; // timer end time
 };
 extern persists_config CONFIG;
 
@@ -180,6 +177,7 @@ extern persists_config CONFIG;
 struct temporary_config{
     // temperature trend 
     HOME_TREND_IMAGES CURRENT_TREND = TREND_FLAT; // current temperature trend
+    float TREND_DELTA = 0; // temperature trend delta
     // relay
     bool IS_RELAY_ENABLED = false; //  current relay status
     // wave form arrays

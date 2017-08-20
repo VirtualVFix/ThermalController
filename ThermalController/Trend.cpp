@@ -2,38 +2,33 @@
 
 Trend::Trend(){
   this->__trend_timestamp = 0;
-  this->__currentTrend = LOCAL.CURRENT_TREND;
-  this->__trendDelta = 0;
-  this->__previousTemp = 0;
-  this->__firstCall = true;
+  this->__previousTemp = 888;
 }
 
 // calculate current trend
 void Trend::__calculateTrend(){
   if (millis()-__trend_timestamp > (CONFIG.DEMO_MODE_ON ? 1000 : (unsigned long) CONFIG.TREND_UPDATE_INTERVAL*1000)){
-    if ((int)__trendDelta < 0){
-      this->__currentTrend = TREND_UP;
-    }else if ((int)__trendDelta > 0){
-      this->__currentTrend = TREND_DOWN;
+    if ((int)LOCAL.TREND_DELTA < 0){
+      LOCAL.CURRENT_TREND = TREND_UP;
+    }else if ((int)LOCAL.TREND_DELTA > 0){
+      LOCAL.CURRENT_TREND = TREND_DOWN;
     }else{
-      this->__currentTrend = TREND_FLAT;
+      LOCAL.CURRENT_TREND = TREND_FLAT;
     }
-    this->__trendDelta = 0;
-    this->__trend_timestamp = millis();
-    LOCAL.CURRENT_TREND = __currentTrend;
+    LOCAL.TREND_DELTA = 0;
+    __trend_timestamp = millis();
   }
 }
 
 void Trend::Update(float &temperature){
   // ignore first call of function when previous temperature is N/A 
-  if (__firstCall){
-    this->__previousTemp = temperature;
-    this->__firstCall = false;
+  if (__previousTemp == 888){
+    __previousTemp = temperature;
   }
   
   // calc trend delta
-  this->__trendDelta += __previousTemp-temperature;
-  this->__previousTemp = temperature; 
+  LOCAL.TREND_DELTA += __previousTemp-temperature;
+  __previousTemp = temperature; 
   
   // calculate temperature trend
   __calculateTrend();
@@ -44,8 +39,7 @@ void Trend::Update(float &temperature){
     text_int.setBackground(TREND_EMPTY);
   }else{
     NextText text_float = NextText(HOME_TEMP_FLOAT_TEXT.PAGE, HOME_TEMP_FLOAT_TEXT.ID, HOME_TEMP_FLOAT_TEXT.NAME);
-    text_int.setBackground(__currentTrend);
-    text_float.setBackground(__currentTrend);
+    text_int.setBackground(LOCAL.CURRENT_TREND);
+    text_float.setBackground(LOCAL.CURRENT_TREND);
   }
 }
-

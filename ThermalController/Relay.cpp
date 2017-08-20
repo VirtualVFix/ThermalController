@@ -18,13 +18,13 @@ void Relay::__relayOFF(){
 // update relay on/off icon
 void Relay::__displayUpdateRelayIcon(){
   NextCrop _crop = NextCrop(HOME_RELAY_ACTIVE_ICON_CROP.PAGE, HOME_RELAY_ACTIVE_ICON_CROP.ID, HOME_RELAY_ACTIVE_ICON_CROP.NAME);
-  _crop.setImage(LOCAL.IS_RELAY_ENABLED&CONFIG.RELAY_MAY_ENABLED ? HOME_RELAY_ON_IMG: HOME_RELAY_OFF_IMG);
+  _crop.setImage(LOCAL.IS_RELAY_ENABLED&CONFIG.RELAY_MAY_ENABLED ? HOME_ICONS_ON_IMG: HOME_ICONS_OFF_IMG);
 }
 
 // update relay control enable/disable icon
 void Relay::__displayUpdateRelayControlIcon(){
   NextCrop _crop = NextCrop(HOME_RELAY_CONTROL_ICON_CROP.PAGE, HOME_RELAY_CONTROL_ICON_CROP.ID, HOME_RELAY_CONTROL_ICON_CROP.NAME);
-  _crop.setImage(CONFIG.RELAY_MAY_ENABLED ? HOME_RELAY_ON_IMG: HOME_RELAY_OFF_IMG);
+  _crop.setImage(CONFIG.RELAY_MAY_ENABLED ? HOME_ICONS_ON_IMG: HOME_ICONS_OFF_IMG);
 }
 
 void Relay::UpdateIcons(){

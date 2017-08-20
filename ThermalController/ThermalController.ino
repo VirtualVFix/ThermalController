@@ -4,7 +4,7 @@
 #include "ClockPage.h"
 #include "SettingPage.h"
 #include "Setting2Page.h"
-//#include "SDCard.h"
+#include <MD_DS3231.h>
 
 BasePage *p_current = NULL;
 
@@ -77,10 +77,6 @@ void setup(){
   p_current->OnPageLoad();
 
   printMemory("setup end");
-
-//  SDCard SD = SDCard();
-//  SD.write(TEMPERATURE_FILE, "TEST 1");
-//  SD.read(TEMPERATURE_FILE, NULL);
 }
 
 void loop(){  
