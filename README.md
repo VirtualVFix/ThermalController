@@ -1,5 +1,7 @@
 # ThermalController
-DIY remote (wired) home weather station based on Arduino Nano, Nextion display, DS3231 rtc module, DHT22 digital temperature and humidity sensor and solid-state relay to control any heater in 3D printed body <br>
+DIY home weather station based on Arduino Nano, Nextion display, DS3231 RTC module, DHT22 sensor, and solid-state relay.<br>
+Allow controlling any heater via relay integration to the power line.<br>
+The station has 3D printed body and can be used remotely via a long wired connection. Also, the station has a touch orientation UI.<br>
 
 ![Thermal controller](Doc/render.jpg)
 
